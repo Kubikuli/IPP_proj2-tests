@@ -3500,7 +3500,7 @@ def test_escape_seq1(tmp_path):
 #   ]
 # }
 
-    input_text = """
+    input_text = r"""
 <?xml version="1.0" encoding="UTF-8"?>
 <program language="SOL25">
     <class name="Main" parent="Object">
@@ -3511,7 +3511,7 @@ def test_escape_seq1(tmp_path):
                     <expr>
                         <send selector="print">
                             <expr>
-                                <literal class="String" value="Ahoj\\nahoj"/>
+                                <literal class="String" value="Ahoj\nahoj"/>
                             </expr>
                         </send>
                     </expr>
@@ -3538,7 +3538,7 @@ def test_escape_seq2(tmp_path):
 #   ]
 # }
 
-    input_text = """
+    input_text = r"""
 <?xml version="1.0" encoding="UTF-8"?>
 <program language="SOL25">
     <class name="Main" parent="Object">
@@ -3549,7 +3549,7 @@ def test_escape_seq2(tmp_path):
                     <expr>
                         <send selector="print">
                             <expr>
-                                <literal class="String" value="Ahoj\\\\ahoj"/>
+                                <literal class="String" value="Ahoj\\ahoj"/>
                             </expr>
                         </send>
                     </expr>
@@ -3560,7 +3560,7 @@ def test_escape_seq2(tmp_path):
 </program>
 """.lstrip()
 
-    expected_output = "Ahoj\\ahoj"
+    expected_output = r"Ahoj\ahoj"
 
     # Optional user input file (can be empty or contain user input)
     input_file = tmp_path / "input.txt"
@@ -3576,7 +3576,7 @@ def test_escape_seq3(tmp_path):
 #   ]
 # }
 
-    input_text = """
+    input_text = r"""
 <?xml version="1.0" encoding="UTF-8"?>
 <program language="SOL25">
     <class name="Main" parent="Object">
@@ -3587,7 +3587,7 @@ def test_escape_seq3(tmp_path):
                     <expr>
                         <send selector="print">
                             <expr>
-                                <literal class="String" value="Ahoj\\'ahoj"/>
+                                <literal class="String" value="Ahoj\'ahoj"/>
                             </expr>
                         </send>
                     </expr>
@@ -3614,7 +3614,7 @@ def test_escape_seq4(tmp_path):
 #   ]
 # }
 
-    input_text = """
+    input_text = r"""
 <?xml version="1.0" encoding="UTF-8"?>
 <program language="SOL25">
     <class name="Main" parent="Object">
@@ -3625,7 +3625,7 @@ def test_escape_seq4(tmp_path):
                     <expr>
                         <send selector="print">
                             <expr>
-                                <literal class="String" value="Ahoj\\n\\'Sve&quot;te \\\\\\'"/>
+                                <literal class="String" value="Ahoj\n\'Sve&quot;te \\\'"/>
                             </expr>
                         </send>
                     </expr>
@@ -3669,7 +3669,7 @@ def test_ifTrue_ifFalse(tmp_path):
 #     _ := false ifTrue: t ifFalse: f.
 #   ]
 # }
-    input_text = """
+    input_text = r"""
 <?xml version="1.0" encoding="UTF-8"?>
 <program language="SOL25">
     <class name="TrueBlock" parent="Object">
@@ -3680,7 +3680,7 @@ def test_ifTrue_ifFalse(tmp_path):
                     <expr>
                         <send selector="print">
                             <expr>
-                                <literal class="String" value="value from true\\n"/>
+                                <literal class="String" value="value from true\n"/>
                             </expr>
                         </send>
                     </expr>
@@ -3696,7 +3696,7 @@ def test_ifTrue_ifFalse(tmp_path):
                     <expr>
                         <send selector="print">
                             <expr>
-                                <literal class="String" value="value from false\\n"/>
+                                <literal class="String" value="value from false\n"/>
                             </expr>
                         </send>
                     </expr>
