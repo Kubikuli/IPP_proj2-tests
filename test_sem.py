@@ -929,3 +929,42 @@ def test_wrong_block_value_msg2(tmp_path):
     input_file.write_text("")  # Empty for this test
 
     run_sem_test(str(input_file), input_text, expected_codes)
+
+
+# ************************ LeO tests ***********************
+
+def test_leo_error_dnu(tmp_path):
+# class Main : Object {
+#   run [ |
+#     _ := self ahoj.
+#   ]
+# }
+    input_text = """
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <send selector="ahoj">
+              <expr>
+                <var name="self" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_codes = {51}
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_sem_test(str(input_file), input_text, expected_codes)

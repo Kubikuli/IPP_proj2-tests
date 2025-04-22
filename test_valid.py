@@ -4605,3 +4605,1890 @@ def test_empty_block_returns_nil(tmp_path):
     input_file.write_text("")  # Empty for this test
 
     run_test(str(input_file), input_text, expected_output)
+
+
+# ************************ LeO tests ***********************
+
+def test_leo_nil_var_print(tmp_path):
+# class Main : Object {
+#   run [ |
+#     result := nil.
+#     _ := ((result asString) print).
+#   ]
+# }
+    input_text = """
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="result" />
+          <expr>
+            <literal class="Nil" value="nil" />
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="asString">
+                  <expr>
+                    <var name="result" />
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = "nil"
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
+
+def test_leo_string_constructors(tmp_path):
+# class Main : Object {
+#   run [ |
+#     _ := ('[' print).
+#     str := (String new).
+#     _ := (str print).
+#     _ := (']' print).
+#     inputString := (String read).
+#     _ := (inputString print).
+#   ]
+# }
+    input_text = """
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value="[" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="str" />
+          <expr>
+            <send selector="new">
+              <expr>
+                <literal class="class" value="String" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <var name="str" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="4">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value="]" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="5">
+          <var name="inputString" />
+          <expr>
+            <send selector="read">
+              <expr>
+                <literal class="class" value="String" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="6">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <var name="inputString" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = "[]Hello, world!"
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("Hello, world!")
+
+    run_test(str(input_file), input_text, expected_output)
+
+
+def test_leo_escape_sequence(tmp_path):
+# class Main : Object {
+#   run [ |
+#     i := '<>interpreted (\n, \\, \')'.
+#     _ := (i print).
+#   ]
+# }
+    input_text = r"""
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="i" />
+          <expr>
+            <literal class="String" value="&lt;&gt;interpreted (\n, \\, \')" />
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <var name="i" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = """<>interpreted (
+, \, ')"""
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
+
+def test_leo_attribute_individuality(tmp_path):
+# class TestClass : Object {
+
+# }
+
+# class Main : Object {
+#   run [ |
+#     instance1 := (TestClass new).
+#     instance2 := (TestClass new).
+#     _ := (instance1 attribute: 5).
+#     _ := (instance2 attribute: 10).
+#     value1 := (instance1 attribute).
+#     value2 := (instance2 attribute).
+#     _ := ((value1 asString) print).
+#     _ := ('\n' print).
+#     _ := ((value2 asString) print).
+#     _ := ('\n' print).
+#   ]
+# }
+    input_text = r"""
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="TestClass" parent="Object" />
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="instance1" />
+          <expr>
+            <send selector="new">
+              <expr>
+                <literal class="class" value="TestClass" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="instance2" />
+          <expr>
+            <send selector="new">
+              <expr>
+                <literal class="class" value="TestClass" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <send selector="attribute:">
+              <expr>
+                <var name="instance1" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="Integer" value="5" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="4">
+          <var name="_" />
+          <expr>
+            <send selector="attribute:">
+              <expr>
+                <var name="instance2" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="Integer" value="10" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="5">
+          <var name="value1" />
+          <expr>
+            <send selector="attribute">
+              <expr>
+                <var name="instance1" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="6">
+          <var name="value2" />
+          <expr>
+            <send selector="attribute">
+              <expr>
+                <var name="instance2" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="7">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="asString">
+                  <expr>
+                    <var name="value1" />
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="8">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value="\n" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="9">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="asString">
+                  <expr>
+                    <var name="value2" />
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="10">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value="\n" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = "5\n10"
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
+
+def test_leo_self_attributes(tmp_path):
+# class Main : Object {
+#   run [ |
+#     r := (self value: 10).
+#     _ := (((self value) asString) print).
+#     e := (self next: (self value)).
+#     t := (self value: nil).
+#     _ := (((self next) asString) print).
+#     _ := (((self value) asString) print).
+#   ]
+# }
+    input_text = """
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="r" />
+          <expr>
+            <send selector="value:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="Integer" value="10" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="asString">
+                  <expr>
+                    <send selector="value">
+                      <expr>
+                        <var name="self" />
+                      </expr>
+                    </send>
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="e" />
+          <expr>
+            <send selector="next:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <send selector="value">
+                    <expr>
+                      <var name="self" />
+                    </expr>
+                  </send>
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="4">
+          <var name="t" />
+          <expr>
+            <send selector="value:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="Nil" value="nil" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="5">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="asString">
+                  <expr>
+                    <send selector="next">
+                      <expr>
+                        <var name="self" />
+                      </expr>
+                    </send>
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="6">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="asString">
+                  <expr>
+                    <send selector="value">
+                      <expr>
+                        <var name="self" />
+                      </expr>
+                    </send>
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = "1010nil"
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
+
+def test_leo_self_identicalTo(tmp_path):
+# class CustomClass : Object {
+#   returnSelf [ |
+#     _ := self.
+#   ]
+# }
+
+# class Main : Object {
+#   run [ |
+#     _ := (true string: 'true').
+#     _ := (false string: 'false').
+#     instance := (CustomClass new).
+#     returnedSelf := (instance returnSelf).
+#     result := (instance identicalTo: returnedSelf).
+#     _ := ((result string) print).
+#   ]
+# }
+    input_text = """
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="CustomClass" parent="Object">
+    <method selector="returnSelf">
+      <block arity="0">
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <var name="self" />
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <send selector="string:">
+              <expr>
+                <literal class="True" value="true" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="String" value="true" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="_" />
+          <expr>
+            <send selector="string:">
+              <expr>
+                <literal class="False" value="false" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="String" value="false" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="instance" />
+          <expr>
+            <send selector="new">
+              <expr>
+                <literal class="class" value="CustomClass" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="4">
+          <var name="returnedSelf" />
+          <expr>
+            <send selector="returnSelf">
+              <expr>
+                <var name="instance" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="5">
+          <var name="result" />
+          <expr>
+            <send selector="identicalTo:">
+              <expr>
+                <var name="instance" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <var name="returnedSelf" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="6">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="string">
+                  <expr>
+                    <var name="result" />
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = "true"
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
+def test_leo_isNumber(tmp_path):
+# class Main : Object {
+#   run [ |
+#     integerInstance := (Integer new).
+#     stringInstance := (String new).
+#     _ := (true string: 'true').
+#     _ := (false string: 'false').
+#     isIntegerNumber := (integerInstance isNumber).
+#     isStringNumber := (stringInstance isNumber).
+#     _ := ((isIntegerNumber string) print).
+#     _ := ('\n' print).
+#     _ := ((isStringNumber string) print).
+#     _ := ('\n' print).
+#     _ := ((((Object new) isNumber) string) print).
+#   ]
+# }
+    input_text = r"""
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="integerInstance" />
+          <expr>
+            <send selector="new">
+              <expr>
+                <literal class="class" value="Integer" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="stringInstance" />
+          <expr>
+            <send selector="new">
+              <expr>
+                <literal class="class" value="String" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <send selector="string:">
+              <expr>
+                <literal class="True" value="true" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="String" value="true" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="4">
+          <var name="_" />
+          <expr>
+            <send selector="string:">
+              <expr>
+                <literal class="False" value="false" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="String" value="false" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="5">
+          <var name="isIntegerNumber" />
+          <expr>
+            <send selector="isNumber">
+              <expr>
+                <var name="integerInstance" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="6">
+          <var name="isStringNumber" />
+          <expr>
+            <send selector="isNumber">
+              <expr>
+                <var name="stringInstance" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="7">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="string">
+                  <expr>
+                    <var name="isIntegerNumber" />
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="8">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value="\n" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="9">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="string">
+                  <expr>
+                    <var name="isStringNumber" />
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="10">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value="\n" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="11">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="string">
+                  <expr>
+                    <send selector="isNumber">
+                      <expr>
+                        <send selector="new">
+                          <expr>
+                            <literal class="class" value="Object" />
+                          </expr>
+                        </send>
+                      </expr>
+                    </send>
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = """true
+false
+false"""
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
+
+def test_leo_block_1par_eval(tmp_path):
+# class Main : Object {
+#   run [ |
+#     block := [ :param|
+#       _ := param.
+#     ].
+#     argument := 42.
+#     result := (block value: argument).
+#     _ := ((result asString) print).
+#   ]
+# }
+    input_text = """
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="block" />
+          <expr>
+            <block arity="1">
+              <parameter order="1" name="param" />
+              <assign order="1">
+                <var name="_" />
+                <expr>
+                  <var name="param" />
+                </expr>
+              </assign>
+            </block>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="argument" />
+          <expr>
+            <literal class="Integer" value="42" />
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="result" />
+          <expr>
+            <send selector="value:">
+              <expr>
+                <var name="block" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <var name="argument" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="4">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="asString">
+                  <expr>
+                    <var name="result" />
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = "42"
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
+
+def test_leo_super_cascade(tmp_path):
+# class CustomClass : Object {
+#   testMethod [ |
+#     _ := 'Superclass method called.'.
+#   ]
+# }
+
+# class MiddleClass : CustomClass {
+#   testMethod [ |
+#     superResult := (super testMethod).
+#     result := (superResult concatenateWith: ' Middleclass method extended.').
+#     _ := result.
+#   ]
+# }
+
+# class SubClass : MiddleClass {
+#   testMethod [ |
+#     superResult := (super testMethod).
+#     result := (superResult concatenateWith: ' Subclass method extended.').
+#     _ := result.
+#   ]
+# }
+
+# class Main : Object {
+#   run [ |
+#     subInstance := (SubClass new).
+#     result := (subInstance testMethod).
+#     _ := (result print).
+#   ]
+# }
+    input_text = r"""
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="CustomClass" parent="Object">
+    <method selector="testMethod">
+      <block arity="0">
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <literal class="String" value="Superclass method called." />
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+  <class name="MiddleClass" parent="CustomClass">
+    <method selector="testMethod">
+      <block arity="0">
+        <assign order="1">
+          <var name="superResult" />
+          <expr>
+            <send selector="testMethod">
+              <expr>
+                <var name="super" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="result" />
+          <expr>
+            <send selector="concatenateWith:">
+              <expr>
+                <var name="superResult" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="String" value=" Middleclass method extended." />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <var name="result" />
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+  <class name="SubClass" parent="MiddleClass">
+    <method selector="testMethod">
+      <block arity="0">
+        <assign order="1">
+          <var name="superResult" />
+          <expr>
+            <send selector="testMethod">
+              <expr>
+                <var name="super" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="result" />
+          <expr>
+            <send selector="concatenateWith:">
+              <expr>
+                <var name="superResult" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="String" value=" Subclass method extended." />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <var name="result" />
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="subInstance" />
+          <expr>
+            <send selector="new">
+              <expr>
+                <literal class="class" value="SubClass" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="result" />
+          <expr>
+            <send selector="testMethod">
+              <expr>
+                <var name="subInstance" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <var name="result" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = "Superclass method called. Middleclass method extended. Subclass method extended."
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
+
+def test_leo_super_main(tmp_path):
+# class Test : Object {
+#   run [ |
+#     _ := ('Test run' print).
+#   ]
+# }
+
+# class Main : Test {
+#   run [ |
+#     _ := (super run).
+#     _ := ('\nMain run' print).
+#   ]
+# }
+    input_text = r"""
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="Test" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value="Test run" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+  <class name="Main" parent="Test">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <send selector="run">
+              <expr>
+                <var name="super" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value="\nMain run" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = """Test run
+Main run"""
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
+
+
+def test_leo_mystring(tmp_path):
+# class MyString : String {
+#   init [ |
+#     _ := (self isMyString: true).
+#     _ := (self length: 0).
+#     _ := self.
+#   ]
+#   init: [ :len|
+#     _ := (self init).
+#     _ := (self length: len).
+#     _ := self.
+#   ]
+#   concatenateWith: [ :s|
+#     res := (MyString from: (super concatenateWith: s)).
+#     _ := (res init: ((self length) plus: (s length))).
+#   ]
+#   startsWith:endsBefore: [ :b :e|
+#     res := (super startsWith: b endsBefore: e).
+#     _ := ((res isNil) ifTrue: [ |
+
+#     ] ifFalse: [ |
+#       _ := (res length: (e minus: b)).
+#     ]).
+#     _ := res.
+#   ]
+#   println [ |
+#     _ := (self print).
+#     _ := ('\n' print).
+#     _ := self.
+#   ]
+# }
+
+# class Main : Object {
+#   run [ |
+#     ms := ((MyString new) init).
+#     ms2 := ((MyString from: 'ahoj') init: 4).
+#     ms3 := ((MyString from: 'svete') init: 5).
+#     cat := (ms concatenateWith: ms2).
+#     _ := (cat print).
+#     _ := (' je delky ' print).
+#     _ := (((cat length) asString) print).
+#     spoj := (cat concatenateWith: ms3).
+#     _ := (spoj println).
+#     _ := (((spoj length) asString) print).
+#   ]
+# }
+    input_text = r"""
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="MyString" parent="String">
+    <method selector="init">
+      <block arity="0">
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <send selector="isMyString:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="True" value="true" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="_" />
+          <expr>
+            <send selector="length:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="Integer" value="0" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <var name="self" />
+          </expr>
+        </assign>
+      </block>
+    </method>
+    <method selector="init:">
+      <block arity="1">
+        <parameter order="1" name="len" />
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <send selector="init">
+              <expr>
+                <var name="self" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="_" />
+          <expr>
+            <send selector="length:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <var name="len" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <var name="self" />
+          </expr>
+        </assign>
+      </block>
+    </method>
+    <method selector="concatenateWith:">
+      <block arity="1">
+        <parameter order="1" name="s" />
+        <assign order="1">
+          <var name="res" />
+          <expr>
+            <send selector="from:">
+              <expr>
+                <literal class="class" value="MyString" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <send selector="concatenateWith:">
+                    <expr>
+                      <var name="super" />
+                    </expr>
+                    <arg order="1">
+                      <expr>
+                        <var name="s" />
+                      </expr>
+                    </arg>
+                  </send>
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="_" />
+          <expr>
+            <send selector="init:">
+              <expr>
+                <var name="res" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <send selector="plus:">
+                    <expr>
+                      <send selector="length">
+                        <expr>
+                          <var name="self" />
+                        </expr>
+                      </send>
+                    </expr>
+                    <arg order="1">
+                      <expr>
+                        <send selector="length">
+                          <expr>
+                            <var name="s" />
+                          </expr>
+                        </send>
+                      </expr>
+                    </arg>
+                  </send>
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+    <method selector="startsWith:endsBefore:">
+      <block arity="2">
+        <parameter order="1" name="b" />
+        <parameter order="2" name="e" />
+        <assign order="1">
+          <var name="res" />
+          <expr>
+            <send selector="startsWith:endsBefore:">
+              <expr>
+                <var name="super" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <var name="b" />
+                </expr>
+              </arg>
+              <arg order="2">
+                <expr>
+                  <var name="e" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="_" />
+          <expr>
+            <send selector="ifTrue:ifFalse:">
+              <expr>
+                <send selector="isNil">
+                  <expr>
+                    <var name="res" />
+                  </expr>
+                </send>
+              </expr>
+              <arg order="1">
+                <expr>
+                  <block arity="0" />
+                </expr>
+              </arg>
+              <arg order="2">
+                <expr>
+                  <block arity="0">
+                    <assign order="1">
+                      <var name="_" />
+                      <expr>
+                        <send selector="length:">
+                          <expr>
+                            <var name="res" />
+                          </expr>
+                          <arg order="1">
+                            <expr>
+                              <send selector="minus:">
+                                <expr>
+                                  <var name="e" />
+                                </expr>
+                                <arg order="1">
+                                  <expr>
+                                    <var name="b" />
+                                  </expr>
+                                </arg>
+                              </send>
+                            </expr>
+                          </arg>
+                        </send>
+                      </expr>
+                    </assign>
+                  </block>
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <var name="res" />
+          </expr>
+        </assign>
+      </block>
+    </method>
+    <method selector="println">
+      <block arity="0">
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <var name="self" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value="\n" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <var name="self" />
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="ms" />
+          <expr>
+            <send selector="init">
+              <expr>
+                <send selector="new">
+                  <expr>
+                    <literal class="class" value="MyString" />
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="ms2" />
+          <expr>
+            <send selector="init:">
+              <expr>
+                <send selector="from:">
+                  <expr>
+                    <literal class="class" value="MyString" />
+                  </expr>
+                  <arg order="1">
+                    <expr>
+                      <literal class="String" value="ahoj" />
+                    </expr>
+                  </arg>
+                </send>
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="Integer" value="4" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="ms3" />
+          <expr>
+            <send selector="init:">
+              <expr>
+                <send selector="from:">
+                  <expr>
+                    <literal class="class" value="MyString" />
+                  </expr>
+                  <arg order="1">
+                    <expr>
+                      <literal class="String" value="svete" />
+                    </expr>
+                  </arg>
+                </send>
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="Integer" value="5" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="4">
+          <var name="cat" />
+          <expr>
+            <send selector="concatenateWith:">
+              <expr>
+                <var name="ms" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <var name="ms2" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="5">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <var name="cat" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="6">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value=" je delky " />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="7">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="asString">
+                  <expr>
+                    <send selector="length">
+                      <expr>
+                        <var name="cat" />
+                      </expr>
+                    </send>
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="8">
+          <var name="spoj" />
+          <expr>
+            <send selector="concatenateWith:">
+              <expr>
+                <var name="cat" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <var name="ms3" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="9">
+          <var name="_" />
+          <expr>
+            <send selector="println">
+              <expr>
+                <var name="spoj" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="10">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="asString">
+                  <expr>
+                    <send selector="length">
+                      <expr>
+                        <var name="spoj" />
+                      </expr>
+                    </send>
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = """ahoj je delky 4ahojsvete
+9"""
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
+
+def test_leo_factorial_iterative(tmp_path):
+# class Main : Object {
+#   run [ |
+#     n := ((String read) asInteger).
+#     res := (self factorial: n).
+#     _ := ((res asString) print).
+#   ]
+#   decrement_a [ |
+#     _ := (self a: ((self a) minus: 1)).
+#   ]
+#   multiply_vysl_a [ |
+#     _ := (self vysl: ((self vysl) multiplyBy: (self a))).
+#   ]
+#   factorial: [ :n|
+#     _ := (self a: n).
+#     r := ((n greaterThan: 0) ifTrue: [ |
+#       _ := (self vysl: 1).
+#       _ := ([ |
+#         _ := ((self a) greaterThan: 0).
+#       ] whileTrue: [ |
+#         _ := (self multiply_vysl_a).
+#         _ := (self decrement_a).
+#       ]).
+#     ] ifFalse: [ |
+#       _ := ('Factorial nelze spocitat.' print).
+#     ]).
+#     _ := (self vysl).
+#   ]
+# }
+    input_text = """
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="n" />
+          <expr>
+            <send selector="asInteger">
+              <expr>
+                <send selector="read">
+                  <expr>
+                    <literal class="class" value="String" />
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="res" />
+          <expr>
+            <send selector="factorial:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <var name="n" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="asString">
+                  <expr>
+                    <var name="res" />
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+    <method selector="decrement_a">
+      <block arity="0">
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <send selector="a:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <send selector="minus:">
+                    <expr>
+                      <send selector="a">
+                        <expr>
+                          <var name="self" />
+                        </expr>
+                      </send>
+                    </expr>
+                    <arg order="1">
+                      <expr>
+                        <literal class="Integer" value="1" />
+                      </expr>
+                    </arg>
+                  </send>
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+    <method selector="multiply_vysl_a">
+      <block arity="0">
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <send selector="vysl:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <send selector="multiplyBy:">
+                    <expr>
+                      <send selector="vysl">
+                        <expr>
+                          <var name="self" />
+                        </expr>
+                      </send>
+                    </expr>
+                    <arg order="1">
+                      <expr>
+                        <send selector="a">
+                          <expr>
+                            <var name="self" />
+                          </expr>
+                        </send>
+                      </expr>
+                    </arg>
+                  </send>
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+    <method selector="factorial:">
+      <block arity="1">
+        <parameter order="1" name="n" />
+        <assign order="1">
+          <var name="_" />
+          <expr>
+            <send selector="a:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <var name="n" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="r" />
+          <expr>
+            <send selector="ifTrue:ifFalse:">
+              <expr>
+                <send selector="greaterThan:">
+                  <expr>
+                    <var name="n" />
+                  </expr>
+                  <arg order="1">
+                    <expr>
+                      <literal class="Integer" value="0" />
+                    </expr>
+                  </arg>
+                </send>
+              </expr>
+              <arg order="1">
+                <expr>
+                  <block arity="0">
+                    <assign order="1">
+                      <var name="_" />
+                      <expr>
+                        <send selector="vysl:">
+                          <expr>
+                            <var name="self" />
+                          </expr>
+                          <arg order="1">
+                            <expr>
+                              <literal class="Integer" value="1" />
+                            </expr>
+                          </arg>
+                        </send>
+                      </expr>
+                    </assign>
+                    <assign order="2">
+                      <var name="_" />
+                      <expr>
+                        <send selector="whileTrue:">
+                          <expr>
+                            <block arity="0">
+                              <assign order="1">
+                                <var name="_" />
+                                <expr>
+                                  <send selector="greaterThan:">
+                                    <expr>
+                                      <send selector="a">
+                                        <expr>
+                                          <var name="self" />
+                                        </expr>
+                                      </send>
+                                    </expr>
+                                    <arg order="1">
+                                      <expr>
+                                        <literal class="Integer" value="0" />
+                                      </expr>
+                                    </arg>
+                                  </send>
+                                </expr>
+                              </assign>
+                            </block>
+                          </expr>
+                          <arg order="1">
+                            <expr>
+                              <block arity="0">
+                                <assign order="1">
+                                  <var name="_" />
+                                  <expr>
+                                    <send selector="multiply_vysl_a">
+                                      <expr>
+                                        <var name="self" />
+                                      </expr>
+                                    </send>
+                                  </expr>
+                                </assign>
+                                <assign order="2">
+                                  <var name="_" />
+                                  <expr>
+                                    <send selector="decrement_a">
+                                      <expr>
+                                        <var name="self" />
+                                      </expr>
+                                    </send>
+                                  </expr>
+                                </assign>
+                              </block>
+                            </expr>
+                          </arg>
+                        </send>
+                      </expr>
+                    </assign>
+                  </block>
+                </expr>
+              </arg>
+              <arg order="2">
+                <expr>
+                  <block arity="0">
+                    <assign order="1">
+                      <var name="_" />
+                      <expr>
+                        <send selector="print">
+                          <expr>
+                            <literal class="String" value="Factorial nelze spocitat." />
+                          </expr>
+                        </send>
+                      </expr>
+                    </assign>
+                  </block>
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <send selector="vysl">
+              <expr>
+                <var name="self" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+""".lstrip()
+
+    expected_output = "720"
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("6")
+
+    run_test(str(input_file), input_text, expected_output)
