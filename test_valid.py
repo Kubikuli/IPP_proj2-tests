@@ -2648,7 +2648,7 @@ def test_attribute_inheritance(tmp_path):
     run_test(str(input_file), input_text, expected_output)
 
 
-def test_transitive_inheritance(tmp_path):
+def test_transitive_inheritance1(tmp_path):
 # class A: Integer {
 #   foo [|
 #     _ := 'A foo'.
@@ -2699,6 +2699,173 @@ def test_transitive_inheritance(tmp_path):
                     <var name="_"/>
                     <expr>
                         <literal class="String" value="B bar"/>
+                    </expr>
+                </assign>
+            </block>
+        </method>
+    </class>
+    <class name="C" parent="B">
+        <method selector="baz">
+            <block arity="0">
+                <assign order="1">
+                    <var name="_"/>
+                    <expr>
+                        <literal class="String" value="C baz"/>
+                    </expr>
+                </assign>
+            </block>
+        </method>
+    </class>
+    <class name="Main" parent="Object">
+        <method selector="run">
+            <block arity="0">
+                <assign order="1">
+                    <var name="c"/>
+                    <expr>
+                        <send selector="new">
+                            <expr>
+                                <literal class="class" value="C"/>
+                            </expr>
+                        </send>
+                    </expr>
+                </assign>
+                <assign order="2">
+                    <var name="_"/>
+                    <expr>
+                        <send selector="print">
+                            <expr>
+                                <send selector="foo">
+                                    <expr>
+                                        <var name="c"/>
+                                    </expr>
+                                </send>
+                            </expr>
+                        </send>
+                    </expr>
+                </assign>
+                <assign order="3">
+                    <var name="_"/>
+                    <expr>
+                        <send selector="print">
+                            <expr>
+                                <send selector="bar">
+                                    <expr>
+                                        <var name="c"/>
+                                    </expr>
+                                </send>
+                            </expr>
+                        </send>
+                    </expr>
+                </assign>
+                <assign order="4">
+                    <var name="_"/>
+                    <expr>
+                        <send selector="print">
+                            <expr>
+                                <send selector="baz">
+                                    <expr>
+                                        <var name="c"/>
+                                    </expr>
+                                </send>
+                            </expr>
+                        </send>
+                    </expr>
+                </assign>
+                <assign order="5">
+                    <var name="c"/>
+                    <expr>
+                        <send selector="plus:">
+                            <arg order="1">
+                                <expr>
+                                    <literal class="Integer" value="4"/>
+                                </expr>
+                            </arg>
+                            <expr>
+                                <var name="c"/>
+                            </expr>
+                        </send>
+                    </expr>
+                </assign>
+                <assign order="6">
+                    <var name="_"/>
+                    <expr>
+                        <send selector="print">
+                            <expr>
+                                <send selector="asString">
+                                    <expr>
+                                        <var name="c"/>
+                                    </expr>
+                                </send>
+                            </expr>
+                        </send>
+                    </expr>
+                </assign>
+            </block>
+        </method>
+    </class>
+</program>
+""".lstrip()
+
+    expected_output = "A fooB barC baz4"
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
+
+def test_transitive_inheritance2(tmp_path):
+# class B: A {
+#     bar [|
+#     _ := 'B bar'.
+#   ]
+# }
+# class A: Integer {
+#   foo [|
+#     _ := 'A foo'.
+#   ]
+# }
+# class C: B {
+#     baz [|
+#     _ := 'C baz'.
+#   ]
+# }
+
+# class Main: Object{
+#   run [|
+#     c := C new.
+#     _ := (c foo) print.
+#     _ := (c bar) print.
+#     _ := (c baz) print.
+
+#     c := c plus: 4.
+#     _ := (c asString) print.
+#   ]
+# }
+
+    input_text = """
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+    <class name="B" parent="A">
+        <method selector="bar">
+            <block arity="0">
+                <assign order="1">
+                    <var name="_"/>
+                    <expr>
+                        <literal class="String" value="B bar"/>
+                    </expr>
+                </assign>
+            </block>
+        </method>
+    </class>
+    <class name="A" parent="Integer">
+        <method selector="foo">
+            <block arity="0">
+                <assign order="1">
+                    <var name="_"/>
+                    <expr>
+                        <literal class="String" value="A foo"/>
                     </expr>
                 </assign>
             </block>
