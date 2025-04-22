@@ -4326,3 +4326,115 @@ def test_shizo3(tmp_path):
     input_file.write_text("")  # Empty for this test
 
     run_test(str(input_file), input_text, expected_output)
+
+def test_empty_block_returns_nil(tmp_path):
+
+# class Main : Object {
+#     run [|
+#         block := [|].
+#         x := block value.
+#         y := Nil new.
+#
+#         a := (x identicalTo: y) 
+#         ifTrue: [| _ := 'ANO' print.]
+#         ifFalse: [| _ := 'NE' print.].
+#     ]
+# }
+
+    input_text = """
+<?xml version="1.0" encoding="utf-8"?>
+<program language="SOL25">
+  <class name="Main" parent="Object">
+    <method selector="run">
+      <block arity="0">
+        <assign order="1">
+          <var name="block"/>
+          <expr>
+            <block arity="0"/>
+          </expr>
+        </assign>
+        <assign order="2">
+          <var name="x"/>
+          <expr>
+            <send selector="value">
+              <expr>
+                <var name="block"/>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="y"/>
+          <expr>
+            <send selector="new">
+              <expr>
+                <literal class="class" value="Nil"/>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="4">
+          <var name="a"/>
+          <expr>
+            <send selector="ifTrue:ifFalse:">
+              <arg order="1">
+                <expr>
+                  <block arity="0">
+                    <assign order="1">
+                      <var name="_"/>
+                      <expr>
+                        <send selector="print">
+                          <expr>
+                            <literal class="String" value="ANO"/>
+                          </expr>
+                        </send>
+                      </expr>
+                    </assign>
+                  </block>
+                </expr>
+              </arg>
+              <arg order="2">
+                <expr>
+                  <block arity="0">
+                    <assign order="1">
+                      <var name="_"/>
+                      <expr>
+                        <send selector="print">
+                          <expr>
+                            <literal class="String" value="NE"/>
+                          </expr>
+                        </send>
+                      </expr>
+                    </assign>
+                  </block>
+                </expr>
+              </arg>
+              <expr>
+                <send selector="identicalTo:">
+                  <arg order="1">
+                    <expr>
+                      <var name="y"/>
+                    </expr>
+                  </arg>
+                  <expr>
+                    <var name="x"/>
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
+      </block>
+    </method>
+  </class>
+</program>
+
+""".lstrip()
+
+    expected_output = "ANO"
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
