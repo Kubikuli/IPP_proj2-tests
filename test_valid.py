@@ -3812,6 +3812,89 @@ def test_escape_seq4(tmp_path):
     run_test(str(input_file), input_text, expected_output)
 
 
+def test_nil_singleton(tmp_path):
+# class Main : Object {
+#   run [ |
+#     y := Nil new.
+#     x := Nil new.
+#     _ := x attr: 5.
+#     _ := ((y attr) asString) print.
+#   ]
+# }
+
+    input_text = """
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="SOL25">
+    <class name="Main" parent="Object">
+        <method selector="run">
+            <block arity="0">
+                <assign order="1">
+                    <var name="y"/>
+                    <expr>
+                        <send selector="new">
+                            <expr>
+                                <literal class="class" value="Nil"/>
+                            </expr>
+                        </send>
+                    </expr>
+                </assign>
+                <assign order="2">
+                    <var name="x"/>
+                    <expr>
+                        <send selector="new">
+                            <expr>
+                                <literal class="class" value="Nil"/>
+                            </expr>
+                        </send>
+                    </expr>
+                </assign>
+                <assign order="3">
+                    <var name="_"/>
+                    <expr>
+                        <send selector="attr:">
+                            <arg order="1">
+                                <expr>
+                                    <literal class="Integer" value="5"/>
+                                </expr>
+                            </arg>
+                            <expr>
+                                <var name="x"/>
+                            </expr>
+                        </send>
+                    </expr>
+                </assign>
+                <assign order="4">
+                    <var name="_"/>
+                    <expr>
+                        <send selector="print">
+                            <expr>
+                                <send selector="asString">
+                                    <expr>
+                                        <send selector="attr">
+                                            <expr>
+                                                <var name="y"/>
+                                            </expr>
+                                        </send>
+                                    </expr>
+                                </send>
+                            </expr>
+                        </send>
+                    </expr>
+                </assign>
+            </block>
+        </method>
+    </class>
+</program>
+""".lstrip()
+
+    expected_output = "5"
+
+    # Optional user input file (can be empty or contain user input)
+    input_file = tmp_path / "input.txt"
+    input_file.write_text("")  # Empty for this test
+
+    run_test(str(input_file), input_text, expected_output)
+
 
 # ************************** TESTS BY @alklk *****************************
  
