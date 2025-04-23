@@ -4784,7 +4784,7 @@ def test_leo_escape_sequence(tmp_path):
 </program>
 """.lstrip()
 
-    expected_output = """<>interpreted (
+    expected_output = r"""<>interpreted (
 , \, ')"""
 
     # Optional user input file (can be empty or contain user input)
