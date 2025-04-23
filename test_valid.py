@@ -5816,12 +5816,15 @@ def test_leo_mystring(tmp_path):
 #   ]
 #   startsWith:endsBefore: [ :b :e|
 #     res := (super startsWith: b endsBefore: e).
+#     _ := self tmp_res: res.
+#     _ := self tmp_len: (e minus: b).
 #     _ := ((res isNil) ifTrue: [ |
-
 #     ] ifFalse: [ |
-#       _ := (res length: (e minus: b)).
+#       _ := self tmp_res: (MyString from: (self tmp_res)).
+#       _ := (self tmp_res) init: (self tmp_len).
 #     ]).
-#     _ := res.
+
+#     _ := self tmp_res.
 #   ]
 #   println [ |
 #     _ := (self print).
@@ -5835,13 +5838,22 @@ def test_leo_mystring(tmp_path):
 #     ms := ((MyString new) init).
 #     ms2 := ((MyString from: 'ahoj') init: 4).
 #     ms3 := ((MyString from: 'svete') init: 5).
+
 #     cat := (ms concatenateWith: ms2).
 #     _ := (cat print).
 #     _ := (' je delky ' print).
 #     _ := (((cat length) asString) print).
+#     _ := '\n' print.
+
 #     spoj := (cat concatenateWith: ms3).
 #     _ := (spoj println).
 #     _ := (((spoj length) asString) print).
+#     _ := '\n' print.
+
+#     substr := (spoj startsWith: 3 endsBefore: 9).
+#     _ := substr print.
+#     _ := ' je delky ' print.
+#     _ := (((substr length) asString) print).
 #   ]
 # }
     input_text = r"""
@@ -6012,6 +6024,45 @@ def test_leo_mystring(tmp_path):
         <assign order="2">
           <var name="_" />
           <expr>
+            <send selector="tmp_res:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <var name="res" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="3">
+          <var name="_" />
+          <expr>
+            <send selector="tmp_len:">
+              <expr>
+                <var name="self" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <send selector="minus:">
+                    <expr>
+                      <var name="e" />
+                    </expr>
+                    <arg order="1">
+                      <expr>
+                        <var name="b" />
+                      </expr>
+                    </arg>
+                  </send>
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="4">
+          <var name="_" />
+          <expr>
             <send selector="ifTrue:ifFalse:">
               <expr>
                 <send selector="isNil">
@@ -6031,21 +6082,48 @@ def test_leo_mystring(tmp_path):
                     <assign order="1">
                       <var name="_" />
                       <expr>
-                        <send selector="length:">
+                        <send selector="tmp_res:">
                           <expr>
-                            <var name="res" />
+                            <var name="self" />
                           </expr>
                           <arg order="1">
                             <expr>
-                              <send selector="minus:">
+                              <send selector="from:">
                                 <expr>
-                                  <var name="e" />
+                                  <literal class="class" value="MyString" />
                                 </expr>
                                 <arg order="1">
                                   <expr>
-                                    <var name="b" />
+                                    <send selector="tmp_res">
+                                      <expr>
+                                        <var name="self" />
+                                      </expr>
+                                    </send>
                                   </expr>
                                 </arg>
+                              </send>
+                            </expr>
+                          </arg>
+                        </send>
+                      </expr>
+                    </assign>
+                    <assign order="2">
+                      <var name="_" />
+                      <expr>
+                        <send selector="init:">
+                          <expr>
+                            <send selector="tmp_res">
+                              <expr>
+                                <var name="self" />
+                              </expr>
+                            </send>
+                          </expr>
+                          <arg order="1">
+                            <expr>
+                              <send selector="tmp_len">
+                                <expr>
+                                  <var name="self" />
+                                </expr>
                               </send>
                             </expr>
                           </arg>
@@ -6058,10 +6136,14 @@ def test_leo_mystring(tmp_path):
             </send>
           </expr>
         </assign>
-        <assign order="3">
+        <assign order="5">
           <var name="_" />
           <expr>
-            <var name="res" />
+            <send selector="tmp_res">
+              <expr>
+                <var name="self" />
+              </expr>
+            </send>
           </expr>
         </assign>
       </block>
@@ -6216,6 +6298,16 @@ def test_leo_mystring(tmp_path):
           </expr>
         </assign>
         <assign order="8">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value="\n" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="9">
           <var name="spoj" />
           <expr>
             <send selector="concatenateWith:">
@@ -6230,7 +6322,7 @@ def test_leo_mystring(tmp_path):
             </send>
           </expr>
         </assign>
-        <assign order="9">
+        <assign order="10">
           <var name="_" />
           <expr>
             <send selector="println">
@@ -6240,7 +6332,7 @@ def test_leo_mystring(tmp_path):
             </send>
           </expr>
         </assign>
-        <assign order="10">
+        <assign order="11">
           <var name="_" />
           <expr>
             <send selector="print">
@@ -6258,14 +6350,84 @@ def test_leo_mystring(tmp_path):
             </send>
           </expr>
         </assign>
+        <assign order="12">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value="\n" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="13">
+          <var name="substr" />
+          <expr>
+            <send selector="startsWith:endsBefore:">
+              <expr>
+                <var name="spoj" />
+              </expr>
+              <arg order="1">
+                <expr>
+                  <literal class="Integer" value="3" />
+                </expr>
+              </arg>
+              <arg order="2">
+                <expr>
+                  <literal class="Integer" value="9" />
+                </expr>
+              </arg>
+            </send>
+          </expr>
+        </assign>
+        <assign order="14">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <var name="substr" />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="15">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <literal class="String" value=" je delky " />
+              </expr>
+            </send>
+          </expr>
+        </assign>
+        <assign order="16">
+          <var name="_" />
+          <expr>
+            <send selector="print">
+              <expr>
+                <send selector="asString">
+                  <expr>
+                    <send selector="length">
+                      <expr>
+                        <var name="substr" />
+                      </expr>
+                    </send>
+                  </expr>
+                </send>
+              </expr>
+            </send>
+          </expr>
+        </assign>
       </block>
     </method>
   </class>
 </program>
 """.lstrip()
 
-    expected_output = """ahoj je delky 4ahojsvete
-9"""
+    expected_output = """ahoj je delky 4
+ahojsvete
+9
+ojsvet je delky 6"""
 
     # Optional user input file (can be empty or contain user input)
     input_file = tmp_path / "input.txt"
