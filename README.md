@@ -41,4 +41,12 @@ git pull
 ## Notes:
 Tag or DM me if you see any issues. (@Kubikuli)  
 If you'd like to contribute to tests, create a pull request. Or send me SOL25 source code if you don't have working parser.  
-You can find basic skeleton at the start of each test file that you can easily use to create new tests.
+You can find basic skeleton at the start of each test file that you can easily copy to create new tests.  
+(100% of these tests was +- 90%+ of official tests)
+
+#### Contributors
+Special thanks to all the contributors who provided some extra tests and helped me correct all the mistakes:
+- @alklk
+- @ONdraid
+- @fifixsandy
+- @LeO (for sharing some of the official tests(I hope he doesn't mind I added them to this collection xd))
